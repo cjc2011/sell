@@ -1,0 +1,28 @@
+import Vue from 'vue';
+import App from './App';
+import VueRouter from 'vue-router';
+import goods from './components/goods/goods';
+import ratings from './components/ratings/ratings';
+import seller from './components/seller/seller';
+
+Vue.use(VueRouter);
+
+let routes = [
+  { path: '/goods', component: goods },
+  { path: '/ratings', component: ratings },
+  { path: '/seller', component: seller }
+];
+
+const router = new VueRouter({
+  routes,
+  linkActiveClass: 'active'
+ });
+/* eslint-disable no-new */
+new Vue({
+  template: '<App/>',
+  components: { App },
+  router: router
+}).$mount('#app');
+
+router.push('/goods');
+

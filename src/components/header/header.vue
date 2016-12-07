@@ -28,21 +28,45 @@
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%" alt="">
     </div>
-    <div v-show="detailShow" class="detail" @click="showDeail">
+    <transition name="fade">
+      <div v-show="detailShow" class="detail" trantion="fade" >
       <div class="detail-wrapper clearfix">
         <div class="detail-main">
           <h1 class="name">{{seller.name}}</h1>
-
+          <div class="star-wrapper">
+            <star :size="48" :score="seller.score"></star>
+          </div>
+          <div class="title">
+            <div class="line"></div>
+            <div class="text">优惠信息</div>
+            <div class="line"></div>
+          </div>
+          <ul v-if="seller.supports" class="supports">
+            <li class="support-item" v-for="(item, index) in seller.supports">
+              <span class="icon" :class="classMap[item.type]"></span>
+              <span class="text">{{item.description}}</span>
+            </li>
+          </ul>
+          <div class="title">
+            <div class="line"></div>
+            <div class="text">商家公告</div>
+            <div class="line"></div>
+          </div>
+          <div class="bulletin">
+            <p class="content">{{seller.bulletin}}</p>
+          </div>
         </div>
       </div>
       <div class="detail-close">
-        <i class="icon-close"></i>
+        <i class="icon-close" @click="showDeail"></i>
       </div>
     </div>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import star from 'components/star/star.vue'
     export default {
       props: {
         seller: {
@@ -61,6 +85,9 @@
         showDeail(){
           this.detailShow = !this.detailShow
         }
+      },
+      components: {
+          star
       }
     };
 </script>
@@ -100,8 +127,6 @@
             font-size 16px
             line-height 18px
             font-weight bold
-
-
         .description
           margin-bottom 10px
           line-height 12px
@@ -126,9 +151,8 @@
               bg-image('guarantee_1')
             &.invoice
               bg-image('invoice_1')
-            &.special
+            &.spaecial
               bg-image('special_1')
-
         .text
           font-size 10px
           color #ffffff
@@ -151,7 +175,6 @@
             margin-left 2px
             font-size 10px
             line-height 24px
-
     .bulletin-wrapper
       height 28px
       overflow hidden
@@ -194,17 +217,82 @@
       width 100%
       overflow auto
       background rgba(7,17,27,0.8)
+      /*
+      transition all 0.5s
+      &.fade-transition
+        opacity 1
+        background rgba(7,17,27,0.8)
+      &.fade-enter,&fade-leave
+        opacity  0
+        background rgba(7,17,27,0)*/
     .detail-wrapper
      min-height 100%
      width 100%
      .detail-main
       margin-top 64px
       padding-bottom 64px
-     .name
-       line-height 16px
-       font-size 16px
-       font-weight 700
-       text-align center
+      .name
+        line-height 16px
+        font-size 16px
+        font-weight 700
+        text-align center
+      .star-wrapper
+        margin-top 18px
+        padding 2px 0
+        text-align center
+      .title
+        display flex
+        width 80%
+        margin 28px auto 24px auto
+        .line
+          flex 1
+          position relative
+          top -6px
+          border-bottom 1px solid rgba(255,255,255,0.2)
+        .text
+          padding 0px 12px
+          font-weight 700
+          font-size 14px
+      .supports
+        width 80%
+        margin 0px auto
+        .support-item
+           padding 0 12px
+           margin-bottom 12px
+           font-size 0
+           &:last-child
+            margin-bottom 0
+        .icon
+          display inline-block
+          width 16px
+          height 16px
+          margin-right 6px
+          background-size 16px
+          vertical-align top
+          &.decrease
+            bg-image('decrease_2')
+          &.discount
+            bg-image('discount_2')
+          &.guarantee
+            bg-image('guarantee_2')
+          &.invoice
+            bg-image('invoice_2')
+          &.spaecial
+            bg-image('special_2')
+        .text
+          font-size 12px
+          font-weight 200
+          color #ffffff
+          line-height 16px
+      .bulletin
+        font-size 13px
+        width 80%
+        margin 0 auto
+        .content
+          font-size 12px
+          line-height 24px
+          color #ffffff
+          font-weight 200
   .detail-close
      font-size 10px
      width 32px

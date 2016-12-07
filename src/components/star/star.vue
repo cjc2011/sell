@@ -1,5 +1,5 @@
 <template>
-  <div class="star" :class="">
+  <div class="star" :class="starType">
     <span v-for="itemClass in itemClasses" :class="itemClass" class="star-item"></span>
   </div>
 </template>
@@ -24,8 +24,8 @@
       starType() {
         return 'star-' + this.size
       },
-      itemClassName() {
-        let result = {};
+      itemClasses() {
+        let result = [];
         let score = Math.floor(this.score * 2) / 2;
         let hasDecimal = score % 1 !== 0;
         let integer = Math.floor(score);
@@ -35,6 +35,10 @@
         if(hasDecimal){
           result.push(CLS_HALF)
         }
+        while (result.length < LENGTH){
+          result.push(CLS_OFF)
+        }
+        return result;
       }
     }
   }
@@ -42,7 +46,6 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixin.styl"
-
   .star
     font-size 0
     .star-item

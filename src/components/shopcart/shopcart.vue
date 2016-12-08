@@ -3,17 +3,17 @@
     <div class="content">
       <div class="content-left">
         <div class="logo-wrapper">
-          <div class="logo">
-            <span class="icon icon-shopping_cart"></span>
+          <div class="logo":class="{'heightlight':totalCount > 0}">
+            <span class="icon icon-shopping_cart" :class="{'heightlight':totalCount > 0}"></span>
           </div>
-          <div class="num">{{totalCount}}</div>
+          <div class="num" v-show="totalCount>0">{{totalCount}}</div>
         </div>
-        <div class="price">￥{{totalPrice}}</div>
+        <div class="price" :class="{'heightlight':totalCount > 0}">￥{{totalPrice}}</div>
         <div class="desc">另需配送费￥{{delivaeryPrice}}</div>
       </div>
       <div class="content-right">
-        <div class="pay">
-          ￥{{minPrice}}起送
+        <div class="pay" :class="payClass=payClass">
+          {{payDesc}}
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
           return [
             {
               price: 10,
-              count: 2
+              count: 6
             }
           ];
         }
@@ -58,6 +58,23 @@
           count += food.count
         })
         return count
+      },
+      payDesc() {
+        if(this.totalPrice === 0){
+          return `￥${this.minPrice}元起送`;
+        }else if(this.totalPrice < this.minPrice){
+          let diff = this.minPrice - this.totalPrice;
+          return `还差${diff}元起送`;
+        }else{
+          return "去结算";
+        }
+      },
+      payClass() {
+        if(this.totalPrice < this.minPrice){
+          return "no-enough"
+        }else{
+          return "enough"
+        }
       }
     }
   }
@@ -96,10 +113,14 @@
             border-radius 50%
             text-align center
             background rgba(40,50,60,0.6)
+            &.heightlight
+              background rgb(0,160,220)
             .icon
               line-height 44px
               font-size 24px
               color #80858a
+              &.heightlight
+                color #ffffff
           .num
             position: absolute
             top 0px
@@ -123,6 +144,8 @@
           border-right 1px solid rgba(255,255,255,0.1)
           font-size 16px
           font-weight 700
+          &.heightlight
+            color #ffffff
         .desc
           display inline-block
           vertical-align top
@@ -138,4 +161,9 @@
           font-weight 700
           font-size 12px
           background #2b333b
+          &.no-enough
+            background #2b333b
+          &.enough
+            background #00b43c
+            color #ffffff
 </style>

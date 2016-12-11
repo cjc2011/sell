@@ -31,7 +31,7 @@
                   <span class="old" v-show="food.oldPrice">{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
-                  <cartontrol :food="food"></cartontrol>
+                  <cartontrol v-on:addCart="drop" :food="food"></cartontrol>
                 </div>
               </div>
             </li>
@@ -39,7 +39,8 @@
         </li>
       </ul>
     </div>
-    <shopcart :delivaery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <!--绑定组件时用ref="组件名"   绑定dom元素时用:ref='名称'-->
+    <shopcart ref="shopcart" :selectFoods="this.selectfoods" :delivaery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
@@ -75,6 +76,17 @@
           }
         }
         return 0;
+      },
+      selectfoods() {
+        let foods = [];
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if(food.count){
+              foods.push(food)
+            }
+          })
+        })
+        return foods;
       }
     },
     created() {
@@ -83,6 +95,7 @@
         response = response.body;
         if (response.errno == ERR_OK ) {
           this.goods = response.data;
+          console.log(this.goods)
           this.$nextTick(() =>{
             this.initScroll();
             this.calculateHeight();
@@ -122,6 +135,9 @@
         let foodList = this.$refs.foodWrapper.querySelectorAll('.food-list-hook');
         let ele = foodList[index];
         this.foodScroll.scrollToElement(ele,300)
+      },
+      drop(el) {
+        this.$refs.shopcart.drop(el)
       }
     },
     components: {

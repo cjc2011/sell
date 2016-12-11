@@ -1,6 +1,10 @@
 <template>
   <div class="cartcontrol">
-    <div class="cart-decrease icon-remove_circle_outline" v-show="food.count>0" @click="decreaseCart($event)"> </div>
+    <transition name="move">
+       <div class="cart-decrease" v-show="food.count>0" @click="decreaseCart($event)">
+        <span class="inner icon-remove_circle_outline"></span>
+       </div>
+    </transition>
     <div class="count" v-show="food.count>0">{{food.count}}</div>
     <div class="cart-add icon-add_circle" @click="addCart($event)"> </div>
   </div>
@@ -26,6 +30,9 @@
         } else {
           this.food.count++;
         }
+        //当+按钮点击是触发父级组件的事件
+        //使用this.$emit派发事件本身 让父组件监听
+        this.$emit('addCart',event.target);
       },
       decreaseCart(event) {
         if (!event._constructed) {
@@ -42,7 +49,7 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .cartcontrol
     font-size 0
-    .cart-decrease,.cart-add
+    .cart-add
       display inline-block
       padding 6px
       font-size 24px
@@ -50,7 +57,22 @@
     .cart-add
       color rgb(0,160,220)
     .cart-decrease
-      color #00a0dc
+      display inline-block
+      padding 6px
+      .icon-remove_circle_outline
+        color #00a0dc
+        display inline-block
+        font-size 24px
+      &.move-enter-active                 //定义元素显示的动画enter-active
+        transition all 0.4s linear
+        transform  translate3D(0px,0,0) rotate(0deg);
+      &.move-leave-active {               //定义元素隐藏时的动画 leave-active
+        transition: all 0.4s linear;
+        transform rotate(0deg)
+      }
+      &.move-enter,&.move-leave-active    //定义元素开始进入动画和隐藏后的状态样式
+        opacity 0
+        transform translate3D(24px,0,0) rotate(180deg)
     .count
       display inline-block
       font-size 10px

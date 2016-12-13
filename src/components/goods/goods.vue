@@ -42,6 +42,7 @@
     <!--绑定组件时用ref="组件名"   绑定dom元素时用:ref='名称'-->
     <shopcart ref="shopcart" :selectFoods="this.selectfoods" :delivaery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
+
 </template>
 
 <script type="text/ecmascript-6">

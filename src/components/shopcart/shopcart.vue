@@ -12,7 +12,7 @@
         <div class="desc">另需配送费￥{{delivaeryPrice}}</div>
       </div>
       <div class="content-right">
-        <div class="pay" :class="payClass=payClass">
+        <div class="pay" :class="payClass=payClass" @click.stop="pay">
           {{payDesc}}
         </div>
       </div>
@@ -29,12 +29,12 @@
         </transition>
       </div>
       <transition name="fold">
-        <div class="shopcart-list" v-show="listshow">
+        <div class="shopcart-list" v-show="listshow" @click.stop>
           <div class="list-head">
             <h1 class="title">购物车</h1>
-            <span class="empty">清空</span>
+            <span class="empty" @click="empty">清空</span>
           </div>
-          <div class="list-content">
+          <div class="list-content" ref="listContent" >
             <ul>
               <li class="food" v-for="food in selectFoods">
                 <span class="name">{{food.name}}</span>
@@ -51,11 +51,16 @@
       </transition>
 
     </div>
+    <transition name="fade">
+      <div class="shopcar-mask" v-show="listshow" @click="hide"></div>
+    </transition>
+
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import cart from '../cartcontrol/cartontrol.vue'
+  import BScroll from 'better-scroll';
   export  default{
     props: {
       selectFoods: {
@@ -143,12 +148,41 @@
         }
         //如果不为空
         let show = !this.fold;
-        console.log(show)
+        if (show) {
+          this.$nextTick(()=>{
+            if (!this.scroll) {
+              this.scroll = new BScroll(this.$refs.listContent,{
+                click: true
+              })
+            }else{
+              this.scroll.refresh()
+            }
+
+          });
+        }
         return show;
 
       }
     },
     methods: {
+      //支付按钮事件
+      pay() {
+        if (this.totalPrice < this.minPrice){
+          alert('金额不足')
+          return
+        }
+        alert("请支付"+this.totalPrice)
+      },
+      //带你及遮挡层关闭
+      hide() {
+        this.fold = true;
+      },
+      //购物车清空
+      empty() {
+        this.selectFoods.forEach((food) => {
+            food.count = 0
+        });
+      },
       drop(el) {
         //这里的el指向的是+号按钮
         for(let i=0;i<this.balls.length;i++){
@@ -214,6 +248,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../common/stylus/mixin.styl"
   .shopcart
     position fixed
     left: 0
@@ -319,8 +354,60 @@
         z-index -1
         width 100%
         transition all 1s;
+        transform  translate3d(0,-100%,0);
         &.fold-enter-active                 //定义元素显示的动画enter-active
-          transform  translate3d(0,-200px,0);
-        &.fold-enter                        //定义元素开始进入动画和隐藏后的状态样式
+          transform  translate3d(0,-100%,0);
+        &.fold-enter,&.fold-leave-active      //定义元素开始进入动画和隐藏后的状态样式
           transform  translate3d(0,0,0)
+        .list-head
+          height 40px
+          line-height 40px
+          padding 0 18px
+          background #f3f5f7
+          border-bottom 1px solid rgba(7,17,27,0.1)
+          .title
+            float left
+            font-size 14px
+            color rgb(7,17,27)
+          .empty
+            float right
+            font-size 12px
+            color rgb(0,160,220)
+        .list-content
+          padding 0 18px
+          max-height 217px
+          background #ffffff
+          overflow: hidden
+          .food
+            position: relative
+            padding  12px 0px
+            box-sizing border-box
+            border-1px(rgba(7,17,27,0.1))
+            .name
+              line-height 24px
+              font-size 14px
+              color rgb(7,17,27)
+            .price
+              position absolute
+              right:90px
+              bottom 12px
+              line-height 24px
+              font-weight 700
+              color rgb(240,20,20)
+            .cartcontrol-wrapper
+              position absolute
+              right 0
+              bottom 6px
+
+
+
+
+    .shopcar-mask
+      position: fixed
+      top 0
+      left 0
+      width 100%
+      height 100%
+      z-index -5
+      background rgba(7,17,27,0.6)
 </style>

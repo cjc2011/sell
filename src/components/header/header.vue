@@ -207,7 +207,6 @@
       width 100%
       filter blur(10px)
       -webkit-filter blur(10px)
-
     .detail
       position fixed
       top 0px
@@ -217,14 +216,19 @@
       width 100%
       overflow auto
       background rgba(7,17,27,0.8)
-      /*
       transition all 0.5s
-      &.fade-transition
+      transform scale(1)
+      &.fade-enter
         opacity 1
-        background rgba(7,17,27,0.8)
-      &.fade-enter,&fade-leave
+        transform scale(1.5)
+      &.fade-leave
+        transform scale(2)
+      &.fade-enter-active
         opacity  0
-        background rgba(7,17,27,0)*/
+        transform scale(1.5)
+      &fade-leave-active
+        opacity  0
+        transform scale(0)
     .detail-wrapper
      min-height 100%
      width 100%

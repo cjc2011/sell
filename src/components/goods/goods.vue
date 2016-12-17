@@ -15,7 +15,7 @@
         <li class="food-list food-list-hook"  v-for="item in goods">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li v-for="food in item.foods" class="food-item border-1px" @click="selectFood(food,$event)">
               <div class="icon">
                 <img width="57px" height="57px" :src="food.icon" alt="商品图片">
               </div>
@@ -40,7 +40,11 @@
       </ul>
     </div>
     <!--绑定组件时用ref="组件名"   绑定dom元素时用:ref='名称'-->
-    <shopcart ref="shopcart" :selectFoods="this.selectfoods" :delivaery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <shopcart ref="shopcart" :selectFoods="selectfoods" :delivaery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+
+    <food ref="food" v-on:add="drop" v-on:addFrist='drop' :food="selectedFood" ></food>
+
+
   </div>
 
 </template>
@@ -49,6 +53,7 @@
   import Bscroll from 'better-scroll';
   import shopCart from 'components/shopcart/shopcart.vue';
   import cart from '../cartcontrol/cartontrol.vue'
+  import food from 'components/food/food';
 
   const ERR_OK = 0;
 
@@ -63,7 +68,8 @@
         goods: [],
         classMap: [],
         listHeight: [],
-        scrollY:0
+        scrollY:0,
+        selectedFood:{}
       }
     },
     //计算属性
@@ -96,7 +102,6 @@
         response = response.body;
         if (response.errno == ERR_OK ) {
           this.goods = response.data;
-          console.log(this.goods)
           this.$nextTick(() =>{
             this.initScroll();
             this.calculateHeight();
@@ -106,7 +111,15 @@
     },
     //定义事件
     methods: {
-      initScroll() {
+      //打开商品详情页事件
+      selectFood (food, event) {
+        if (!event._constructed){
+          return
+        }
+        this.selectedFood = food;
+        this.$refs.food.show()
+      },
+      initScroll () {
         this.meunScroll = new Bscroll(this.$refs.menWrapper,{
           click:true
         });
@@ -114,7 +127,6 @@
           probeType: 3,
           click:true
         });
-
         this.foodScroll.on('scroll',(pos)=> {
           this.scrollY = Math.abs(Math.round(pos.y));
         })
@@ -143,7 +155,8 @@
     },
     components: {
       'shopcart': shopCart,
-      'cartontrol': cart
+      'cartontrol': cart,
+      'food': food
     }
   };
 </script>
@@ -236,10 +249,6 @@
           .price
             font-weight 700
             line-height 24px
-          .cartcontrol-wrapper
-            position absolute
-            right 0px
-            bottom 12px
             .now
                margin-right 8px
                font-size 14px
@@ -248,4 +257,8 @@
                 text-decoration line-through
                 font-size 10px
                 color rgb(147,153,159)
+          .cartcontrol-wrapper
+            position absolute
+            right 0px
+            bottom 12px
 </style>

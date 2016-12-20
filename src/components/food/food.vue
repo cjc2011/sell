@@ -289,8 +289,6 @@
               margin-right 6px
             .avatar
               border-radius 50%
-
-
           .time
             margin-bottom 6px
             line-height 12px

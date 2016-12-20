@@ -36,7 +36,7 @@
             <ratingselect v-on:toggleContent="Content"  v-on:select="active" :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
             <div class="rating-wrapper">
               <ul v-show="food.ratings && food.ratings.length">
-                <li v-for="rating in food.ratings" class="rating-item">
+                <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item">
                   <div class="user">
                     <span class="name">{{rating.username}}</span>
                     <img class="avatar" width="12" height="12" :src="rating.avatar">
@@ -68,7 +68,7 @@
   import ratingSelect from '../ratingselect/ratingselect.vue'
 
 
-  const POSITVE = 0;
+  const POSITIVE = 0;
   const NEGATIVE = 1;
   const ALL = 2;
   export default {
@@ -82,7 +82,7 @@
       return {
         showFlag: false,
         selectType: ALL,        //默认为查看全部评价
-        onlyContent: true,     //默认只看有内容评价
+        onlyContent: false,     //默认只看有内容评价
         desc: {
           all: '全部',
           positive: "推荐",
@@ -92,12 +92,28 @@
     },
     //定义的方法
     methods: {
+      //用来控制是否显示  与select关联起来
+      needShow(type,text){
+        if(this.onlyContent && !text){
+          //如果用户选中了 只看有内容的评价并且这条评价没有没有内容 返回false
+          return false
+        }
+        if(this.selectType === ALL  ){
+          //如果用户选择了查看所有内容  返回true
+          return true
+        }else{
+          //如果用户选择了查看点赞的用户 或者是吐槽的用户  判断对象的type和选择的type是否一致
+          //如果这条评价为吐槽 用户选择的为点赞则返回false
+          return type === this.selectType;
+        }
+
+      },
       show () {
         this.showFlag = true;
         //每次点击展开商品详情的时候都默认为查看全部评价
         //状态初始化
         this.selectType = ALL;
-        this.onlyContent = true;
+        this.onlyContent = false;
         //当页面展示的时候调用Bscroll
         this.$nextTick(() => {
           if(!this.sroll){

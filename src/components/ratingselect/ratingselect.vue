@@ -2,8 +2,8 @@
   <div class="ratingselect">
     <div class="rating-type border-1px">
       <span @click="select(2,$event)" class="block positive" :class="{'active':selectType===2}">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
-      <span @click="select(1,$event)" class="block positive" :class="{'active':selectType===1}">{{desc.positive}}<span class="count">{{positives.length}}</span></span>
-      <span @click="select(0,$event)" class="block negative" :class="{'active':selectType===0}">{{desc.negative}}<span class="count">{{ratings.length - positives.length}}</span></span>
+      <span @click="select(0,$event)" class="block positive" :class="{'active':selectType===0}">{{desc.positive}}<span class="count">{{positives.length}}</span></span>
+      <span @click="select(1,$event)" class="block negative" :class="{'active':selectType===1}">{{desc.negative}}<span class="count">{{ratings.length - positives.length}}</span></span>
     </div>
     <div @click="toggleContent($event)" class="swich border-1px" :class="{'on':onlyContent}" >
       <span class="icon-check_circle"></span>
@@ -13,7 +13,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-  const POSITVE = 0;
+
+
+
+  const POSITIVE = 0;
   const NEGATIVE = 1;
   const ALL = 2;
 
@@ -50,7 +53,6 @@
         if (!event._constructed) {
           return
         }
-        this.selectType = type;
         this.$emit('select',type);
       },
       toggleContent (event) {
@@ -65,7 +67,7 @@
     computed: {
       positives(){
         return this.ratings.filter((ra) => {
-          return ra.rateType === POSITVE;
+          return ra.rateType === POSITIVE;
         })
       }
     }

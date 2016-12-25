@@ -83,7 +83,6 @@
       this.$http.get('./api/ratings').then((response) => {
         response = response.body;
         if(response.erron !== ERROR){
-          console.log(response)
           this.ratings = response.data;
           this.$nextTick(() => {
             if(!this.scroll){

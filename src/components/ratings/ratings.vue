@@ -25,10 +25,10 @@
         </div>
       </div>
       <split></split>
-      <ratingselect :select-type="selectType" :only-content="onlyContent"  :ratings="ratings"></ratingselect>
+      <ratingselect :select-type="selectType" :only-content="onlyContent"  :ratings="ratings" v-on:select="active" v-on:toggleContent="toggleContent"></ratingselect>
       <div class="rating-wrapper">
-        <ul>
-          <li v-for="rating in ratings" class="rating-item">
+        <ul v-show="ratings.length || ratings">
+          <li v-for="rating in ratings" v-show="needShow(rating.rateType,rating.text)" class="rating-item">
               <div class="avatar">
                 <img :src="rating.avatar">
               </div>
@@ -76,7 +76,7 @@
       return {
         ratings: [],
         selectType: ALL,        //默认为查看全部评价
-        onlyContent: true     //默认只看有内容评价
+        onlyContent: false     //默认只看有内容评价
       };
     },
     created() {
@@ -84,6 +84,7 @@
         response = response.body;
         if(response.erron !== ERROR){
           this.ratings = response.data;
+          console.log(this.ratings)
           this.$nextTick(() => {
             if(!this.scroll){
               this.scroll = new Bscroll(this.$refs.ratings,{
@@ -91,9 +92,40 @@
               })
             }
           })
-
         }
       })
+    },
+    methods:{
+      //选择评论类型对应高亮
+      active(type) {
+        this.selectType = type;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      //是否只看内容
+      toggleContent() {
+        this.onlyContent = !this.onlyContent;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+
+      },
+      //评论列表显示
+      needShow(type,text){
+        if(this.onlyContent && !text){
+          //如果用户选中了 只看有内容的评价并且这条评价没有没有内容 返回false
+          return false
+        }
+        if(this.selectType === ALL  ){
+          //如果用户选择了查看所有内容  返回true
+          return true
+        }else{
+          //如果用户选择了查看点赞的用户 或者是吐槽的用户  判断对象的type和选择的type是否一致
+          //如果这条评价为吐槽 用户选择的为点赞则返回false
+          return type === this.selectType;
+        }
+      }
     },
     filters: {
       formatDate(time){

@@ -1,4 +1,4 @@
-<template>
+F<template>
   <transition name="move">
     <div class="food" v-show="showFlag" ref="food">
         <div class="food-content">
